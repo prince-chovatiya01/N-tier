@@ -1,4 +1,4 @@
-# 3-Tier Library Management System
+# The Reading Room - 3-Tier Library Management System
 
 A clean, human-crafted 3-tier "Library Management" web application built using **Node.js, Express, and SQLite** demonstrating strict separation of concerns, domain rule enforcement, mock-tested business logic, and interchangeable data layers.
 

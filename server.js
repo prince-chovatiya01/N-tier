@@ -35,7 +35,7 @@ const bookService = app.locals.bookService;
 
 app.listen(PORT, () => {
   console.log("==================================================");
-  console.log(`  Athena Library Management System (3-Tier App)   `);
+  console.log(`  The Reading Room: Library Management (3-Tier)   `);
   console.log(`  Server running at: http://localhost:${PORT}     `);
   console.log("==================================================");
 });

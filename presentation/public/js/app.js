@@ -1,5 +1,5 @@
 /**
- * Athena Library Management UI Script
+ * The Reading Room - Library Management UI Script
  * Communicates strictly with Presentation Tier REST endpoints.
  */
 
