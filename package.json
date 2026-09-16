@@ -1,0 +1,24 @@
+{
+  "name": "library-3tier-app",
+  "version": "1.0.0",
+  "description": "3-Tier Library Management System demonstrating Separation of Concerns",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node tests/run_tests.js",
+    "demo:swap": "node tests/demo_swap.js"
+  },
+  "keywords": [
+    "3-tier",
+    "architecture",
+    "express",
+    "sqlite",
+    "separation-of-concerns"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

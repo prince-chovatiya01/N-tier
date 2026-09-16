@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Athena - Library Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+            <path d="M6 6h10"/>
+            <path d="M6 10h10"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">Athena</h1>
+          <p class="brand-subtitle">3-Tier Library System</p>
+        </div>
+      </div>
+
+      <div class="tier-badge-card">
+        <span class="badge-label">Architecture Status</span>
+        <div class="tier-status">
+          <span class="status-dot"></span>
+          <span>3 Tiers Connected</span>
+        </div>
+        <p class="tier-desc">Presentation &rarr; Business &rarr; Data</p>
+      </div>
+
+      <div class="sidebar-stats">
+        <div class="stat-box">
+          <span class="stat-number" id="totalBooksCount">0</span>
+          <span class="stat-label">Total Titles</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-number" id="totalCopiesCount">0</span>
+          <span class="stat-label">Available Copies</span>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <p>Cloud Computing Lab 3</p>
+        <small>Separation of Concerns Demo (Node.js + Express + SQLite)</small>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="top-bar">
+        <div class="search-box">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.3-4.3"/>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Search by title or author..." autocomplete="off">
+          <button id="clearSearchBtn" class="clear-btn" style="display:none;">&times;</button>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" id="openAddModalBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Add Book
+          </button>
+        </div>
+      </header>
+
+      <!-- Global Toast Alerts -->
+      <div id="toastContainer" class="toast-container"></div>
+
+      <!-- Catalog View -->
+      <section class="catalog-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Library Catalog</h2>
+            <p class="section-subtitle" id="catalogSummary">Showing all books in repository</p>
+          </div>
+          <div class="view-toggles">
+            <button class="toggle-btn active" id="viewCardsBtn" title="Card View">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            </button>
+            <button class="toggle-btn" id="viewTableBtn" title="Table View">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state" style="display: none;">
+          <div class="empty-icon">📖</div>
+          <h3>No books found</h3>
+          <p>There are no books matching your query, or the repository is empty.</p>
+          <button class="btn btn-secondary" onclick="document.getElementById('openAddModalBtn').click()">Add your first book</button>
+        </div>
+
+        <!-- Cards View -->
+        <div id="booksGrid" class="books-grid"></div>
+
+        <!-- Table View -->
+        <div id="booksTableWrapper" class="table-wrapper" style="display: none;">
+          <table class="books-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>ISBN</th>
+                <th>Year</th>
+                <th>Quantity</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="booksTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal for Add / Edit -->
+  <div id="bookModal" class="modal-backdrop" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add New Book</h3>
+        <button class="close-btn" id="closeModalBtn">&times;</button>
+      </div>
+      <form id="bookForm" novalidate>
+        <input type="hidden" id="bookId">
+        
+        <div id="formErrorAlert" class="form-alert" style="display: none;"></div>
+
+        <div class="form-group">
+          <label for="bookTitle">Book Title <span class="req">*</span></label>
+          <input type="text" id="bookTitle" placeholder="e.g. Clean Code" required>
+        </div>
+
+        <div class="form-group">
+          <label for="bookAuthor">Author <span class="req">*</span></label>
+          <input type="text" id="bookAuthor" placeholder="e.g. Robert C. Martin" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col">
+            <label for="bookIsbn">ISBN <span class="req">*</span></label>
+            <input type="text" id="bookIsbn" placeholder="10 or 13 digits (e.g. 9780132350884)" required>
+            <small class="field-hint">Must be 10 or 13 digits</small>
+          </div>
+          <div class="form-group col">
+            <label for="bookYear">Publication Year <span class="req">*</span></label>
+            <input type="number" id="bookYear" placeholder="e.g. 2008" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="bookQuantity">Quantity in Stock <span class="req">*</span></label>
+          <input type="number" id="bookQuantity" min="0" placeholder="e.g. 5" required>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancelModalBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveBookBtn">Save Book</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div id="deleteModal" class="modal-backdrop" style="display: none;">
+    <div class="modal-dialog modal-small">
+      <div class="modal-header">
+        <h3>Delete Book</h3>
+        <button class="close-btn" id="closeDeleteModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete <strong id="deleteBookTitle"></strong>?</p>
+        <p class="sub-text">This action cannot be undone.</p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
